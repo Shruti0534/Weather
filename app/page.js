@@ -1,113 +1,86 @@
+'use client'
 import Image from "next/image";
+import { useState } from "react";
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+  const[location,setLocation]=useState('')
+  const[weather,setWeather]=useState('')
+  const getWeather=async()=>{
+
+    const api_key='1df5cc637fa0429e80b25922241408'
+    const api_url='http://api.weatherapi.com/v1/current.json?key='+api_key+'&q='+location
+    if(location){
+      try {const res=await fetch(api_url)
+        const data= await res.json()
+        if(data){
+          const api_data={
+            country:data.location.country,
+            city:data.current.name,
+            temp:data.current.temp_f,
+            humidy:data.current.humidity,
+            wind:data.current.wind_mph,
+            gust:data.current.gust_mph,
+            visibility:data.current.vis_miles,
+            condition:data.current.condition.text,
+            img:data.current.condition.icon
+          }
+          setWeather(<>
+           <div className='flex w-full p-20 justify-center'>
+      <div className="w-full max-w-xs">
+        <div className="mb-4">
+          <div className="bg-black shadow lg rounded-4xl px-8 pt-6 pb-8 mb-4 text-white opacity-80">
+           {weather}
+           <div className="text-center text-2xl p-2">City-{api_data.city}</div>
+            <div className="flex justify-center">
+              <div className="flow-root">
+                <div className="float-left">
+                  <img src={api_data.img}  width ='80' height='80' alt="condition" />
+                </div>
+                <div className=" float-left text-6xl"> Temp-{api_data.temp}</div>
+              </div>
+            </div>
+            <div className="text-center text-gray-500"> Condition-{api_data.condition}</div>
+            <div className="flow-root  p-2 ">
+             <div className="flex flex-col gap-5">
+             <div className="float-left text-grey-500"> Hiumidity-{api_data.humidy}%</div>
+             <div className="float-left text-gray-500">Visibility-{api_data.visibility}</div>
+             </div>
+             <div className="flex flex-col gap-5">
+
+              <div className="float-right text-grey-500">Wind-{api_data.wind} mph</div>
+              <div className="float-right text-gray-500">Gust- {api_data.gust} mph</div>
+             </div>
+            </div>
+
+          </div>
         </div>
       </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+     </div>
+         </>)
+        }
+        
+      } catch (err) {
+        console.log(err)
+        
+      }
+    }
+  }
+    return (
+    <>
+    <nav className=" flex items-center justify-center py-4 bg-gray-300 w-full m-0 opacity-90">
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 flex items-center pl-3  pointer-events-none"></div>
+        <input  onChange={ (e)=>setLocation(e.target.value)}className='block bg-slate-800 text-white rounded lg opacity-70 pl-10 p-2 ' type="text"  id='location' value={location} placeholder="location"/>
+
       </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      <button onClick={getWeather} className="bg-blue-600 hover:bg-blue-800 font-bold rounded lg text-white" id='search'>
+      <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="40" height="40" viewBox="0 0 50 50"> <path d="M 21 3 C 11.621094 3 4 10.621094 4 20 C 4 29.378906 11.621094 37 21 37 C 24.710938 37 28.140625 35.804688 30.9375 33.78125 L 44.09375 46.90625 L 46.90625 44.09375 L 33.90625 31.0625 C 36.460938 28.085938 38 24.222656 38 20 C 38 10.621094 30.378906 3 21 3 Z M 21 5 C 29.296875 5 36 11.703125 36 20 C 36 28.296875 29.296875 35 21 35 C 12.703125 35 6 28.296875 6 20 C 6 11.703125 12.703125 5 21 5 Z"></path> </svg>
+      <span className='sr-only'>Search</span>
+      </button>
+    </nav>
+    {weather}
+  
+    </>
   );
 }
